@@ -10,13 +10,13 @@ module CPU #(parameter Nbits=64)
 
 //Señales de salida de sistemas
 logic aluSRC,memToReg,r_enable,w_enable_reg,w_enable_mem,branch,zero,selInstrNext;
-logic [63:0] regData,memData,pc,reg1,reg2,w_data_mem,immediate,aluInB,aluInA,aluResult,nextIns,pc_actual,nextInsBranch,muxMemToReg;
+logic [63:0] regData,memData,pc,reg1,reg2,w_data_mem,immediate,aluInB,aluInA,aluResult,nextIns,pc_actual,nextInsBranch,muxMemToReg,reg2_real;
 logic [31:0] instruc;
-logic [1:0] aluOp;
+logic [1:0] aluOp,fowardA,fowardB;
 logic [3:0] selOp;
 logic [2:0] fun3;
 logic [6:0] fun7;
-logic [4:0] addr_reg1,addr_reg2,addr_regW,nextWrRegEX;
+logic [4:0] addr_reg1,addr_reg2,addr_regW,nextWrRegEX,readReg2,readReg1;
 logic [6:0] opcode;
 logic [63:0] x6;
 
@@ -52,15 +52,22 @@ logic [63:0] ResultAluWB,DataMemWB;
 logic MemtoRegWB,RegWriteWB;
 
 //instanciacion de multiplexores del sistema
-mux2 selAluS(Reg2_EX,Inme_EX,AluSRC_EX,aluInB);//multiplexor para control entrada B de la ALU
+mux2 selAluS(reg2_real,Inme_EX,AluSRC_EX,aluInB);//multiplexor para control entrada B de la ALU
 mux2 selMemToReg(ResultAluWB,DataMemWB,MemtoRegWB,muxMemToReg);//multiplexor para control si la salida es de memoria o de la ALU
 mux2 selBranch(nextIns,PcB_MEM,selInstrNext,pc);//multiplexor para control del salto por branch
+mux3_1 inputA_alu(Reg1_EX,muxMemToReg,ResultMEM,fowardA,aluInA);
+mux3_1 inputB_alu(Reg2_EX,muxMemToReg,ResultMEM,fowardB,reg2_real);
+
+
+
 
 
 //instanciacion de unidades de control del sistema
 controlCPU monitoreo(opcode,aluOp,branch,w_enable_mem,w_enable_reg,memToReg,aluSRC,MemReadID);//unidad de control de todo el sistema
 PC contadordeProg (pc,clk,rst,pc_actual);//bloque donde se actualiza el programCounter
 aluControl controlALU(fun3_EX,fun7_EX,aluOpEX,selOp);//unidad de contro de la ALU
+forwardingUnit controlMulti (addWrRegMEM,addRegWriteWB, readReg1, readReg2,MemtoRegWB,fowardA,fowardB);//Unidad encargada de detectar data hazard solucionables
+
 
 //instanciacion de unidades de memoria del sistema
 instrucMem memoriaInstruc(pc_actual,instruc);//Memoria de instruccion
@@ -78,10 +85,9 @@ nextInsBran nextInsSiBranch (PcB_EX,Inme_EX,PcB_EX); //Calculador de la siguient
 
 //Buffers para lograr el multiciclo
 buffer_IFID b_IFID(instrucIF,PC_IF,clk,instrucID,PC_ID);
-buffer_IDEX b_IDEX(clk,AluSRC_ID,BranchID,MemWriteID,MemReadID,MemToRegID,RegWriteID,addWrRegID,PC_ID,Reg1_ID,Reg2_ID,InmeID,AluOpID,fun3_ID,fun7_ID,addWrRegEX,AluSRC_EX,MemToRegEX,BranchEX,MemWriteEX,MemReadEX,RegWriteEX,PcB_EX,Reg1_EX,Reg2_EX,Inme_EX,aluOpEX,fun3_EX,fun7_EX);
+buffer_IDEX b_IDEX(clk,AluSRC_ID,BranchID,MemWriteID,MemReadID,MemToRegID,RegWriteID,addWrRegID,PC_ID,Reg1_ID,Reg2_ID,InmeID,AluOpID,fun3_ID,fun7_ID,addr_reg1,addr_reg2,addWrRegEX,AluSRC_EX,MemToRegEX,BranchEX,MemWriteEX,MemReadEX,RegWriteEX,PcB_EX,Reg1_EX,Reg2_EX,Inme_EX,aluOpEX,fun3_EX,fun7_EX,readReg1,readReg2);
 buffer_EXMEM b_EXMEM(clk,ZeroEX,BranchEX,MemReadEX,MemWriteEX,RegWriteEX,MemToRegEX,addWrRegEX,ResultEX,PcB_EX,Reg2_EX,addWrRegMEM,ResultMEM,PcB_MEM,ZeroMEM,branchMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM,dataWriteMem_MEM);
 buffer_MEMWB b_MEMWB(clk,memToRegMEM,regWriteMEM,addWrRegMEM,ResultMEM,dataMem_MEM,addRegWriteWB,ResultAluWB,DataMemWB,MemtoRegWB,RegWriteWB);
-
 
          
 //Asignacion de señales para su interconexion
@@ -108,15 +114,6 @@ assign fun7_ID = instrucID[31:25];
 assign AluOpID = aluOp;
 assign addr_reg1 = instrucID[24:20];
 assign addr_reg2 = instrucID[11:7];
-
-//Asignaciones para buffer ID-EX salida EX
-assign aluInA = Reg1_EX;
-
-//Asignaciones para buffer EX-MEM entrada EX
-
-
-
-
 
 
 //Forma de ver la salida del led
