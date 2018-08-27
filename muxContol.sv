@@ -16,7 +16,7 @@ always_comb
                          yAluSRC = aluSRC;
                          yMemRead = memRead; 
                     end
-            1'b0:
+            1'b1:
                     begin
                         yAluOp = 0;
                         yBranch = 0;

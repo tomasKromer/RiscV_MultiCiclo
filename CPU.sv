@@ -66,7 +66,8 @@ controlCPU monitoreo(opcode,aluOp,branch,w_enable_mem,w_enable_reg,memToReg,aluS
 PC contadordeProg (pc,clk,rst,pcWrite,pc_actual);//bloque donde se actualiza el programCounter
 aluControl controlALU(fun3_EX,fun7_EX,aluOpEX,selOp);//unidad de contro de la ALU
 forwardingUnit controlMulti (addWrRegMEM,addRegWriteWB, readReg1, readReg2,regWriteMEM,RegWriteWB,fowardA,fowardB);//Unidad encargada de detectar data hazard solucionables
-HDU HDU_inst (MemReadEX,addWrRegEX,instrucID,selecBurMux,pcWrite,IF_ID_Write);
+HDU HDU_inst (MemReadEX,clk,rst,addWrRegEX,instrucID,selecBurMux,pcWrite,IF_ID_Write);
+
 
 
 //instanciacion de unidades de memoria del sistema
