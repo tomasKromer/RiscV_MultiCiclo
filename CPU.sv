@@ -16,7 +16,7 @@ logic [1:0] aluOp,fowardA,fowardB;
 logic [3:0] selOp;
 logic [2:0] fun3;
 logic [6:0] fun7;
-logic [4:0] addr_reg1,addr_reg2,addr_regW,nextWrRegEX,readReg2,readReg1;
+logic [4:0] addr_reg1,addr_reg2,nextWrRegEX,readReg2,readReg1;
 logic [6:0] opcode;
 logic [63:0] x6;
 
@@ -30,7 +30,7 @@ logic AluSRC_ID,MemToRegID,BranchID,MemWriteID,MemReadID,RegWriteID;
 logic [4:0] addWrRegID;
 logic [63:0] PC_ID,Reg1_ID,Reg2_ID,InmeID;
 logic [1:0] AluOpID;
-logic [1:0] fun3_ID;
+logic [2:0] fun3_ID;
 logic [6:0] fun7_ID;
 
 //señales de buffer de execute EX
@@ -38,7 +38,7 @@ logic [63:0] ResultEX,PcB_EX,PcB_EX2,addWrMemEX,Reg1_EX,Reg2_EX,Inme_EX;
 logic [4:0] addWrRegEX;
 logic [1:0] aluOpEX;
 logic ZeroEX,BranchEX,MemReadEX,MemWriteEX,RegWriteEX,MemToRegEX,AluSRC_EX;
-logic [1:0] fun3_EX;
+logic [2:0] fun3_EX;
 logic [6:0] fun7_EX;
 
 //Señales de buffer de MEM
@@ -108,8 +108,8 @@ assign Reg2_ID = reg2;
 assign InmeID = immediate;
 assign fun3_ID = instrucID[14:12];
 assign fun7_ID = instrucID[31:25];
-assign addr_reg1 = instrucID[24:20];
-assign addr_reg2 = instrucID[11:7];
+assign addr_reg1 = instrucID[19:15];
+assign addr_reg2 = instrucID[24:20];
 
 
 //Forma de ver la salida del led
