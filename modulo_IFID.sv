@@ -3,7 +3,7 @@
 
 module buffer_IFID(input logic [31:0] nextInstruc,
                    input logic [63:0] nextPC,
-                   input logic clk,e_write,
+                   input logic clk,IF_flush,e_write,
                    output logic [31:0] actInstruc,
                    output logic [63:0] actPc);
 
@@ -13,7 +13,13 @@ begin
         begin    
             actInstruc <= nextInstruc;
             actPc <= nextPC;
-        end  
+        end
+    else if (IF_flush)
+        begin
+            actInstruc <= 0;
+            actPc <= 0;
+    end
+   
 end                
                    
 endmodule

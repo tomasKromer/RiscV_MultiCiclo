@@ -7,7 +7,7 @@ module forwardingUnit(input logic [4:0] addwriteReg_MEM,addwriteReg_WB,readReg1,
 
 always_comb
 begin
-    if(addwriteReg_MEM == readReg1 && readReg1 != 0 && wEnableReg_MEM)
+    if(wEnableReg_MEM && addwriteReg_MEM == readReg1 && readReg1 != 0)
             begin
                 fowardA = 2'b10;
                 if(addwriteReg_MEM == readReg2 && readReg2 != 0 && wEnableReg_MEM)
@@ -25,7 +25,7 @@ begin
                 else
                     fowardA = 2'b00;
             end
-        else
+     else
             if(addwriteReg_WB == readReg1 && readReg1 != 0 && wEnableReg_WB)
                     begin
                         fowardA = 2'b01;
@@ -34,14 +34,16 @@ begin
                         else
                                   fowardB = 2'b00;        
                     end
-             else
+             else if(addwriteReg_WB == readReg2 && readReg2 != 0 && wEnableReg_WB)
                     begin
                         fowardA = 2'b00;
-                        if(addwriteReg_WB == readReg2 && readReg2 != 0 && wEnableReg_WB)
-                             fowardB = 2'b01;
-                        else
-                             fowardB = 2'b00; 
-                    end      
+                        fowardB = 2'b01;
+                    end
+             else
+                begin
+                        fowardB = 2'b00; 
+                        fowardA = 2'b00; 
+                end      
 end
 
 
