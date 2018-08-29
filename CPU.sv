@@ -54,7 +54,7 @@ logic MemtoRegWB,RegWriteWB;
 //instanciacion de multiplexores del sistema
 mux2 selAluS(reg2_real,Inme_EX,AluSRC_EX,aluInB);//multiplexor para control entrada B de la ALU
 mux2 selMemToReg(ResultAluWB,DataMemWB,MemtoRegWB,muxMemToReg);//multiplexor para control si la salida es de memoria o de la ALU
-mux2 selBranch(nextIns,PC_ifBranch,branch,pc);//multiplexor para control del salto por branch
+mux2 selBranch(nextIns,PC_ifBranch,IFflush_selInstrNext,pc);//multiplexor para control del salto por branch
 mux3_1 inputA_alu(Reg1_EX,muxMemToReg,ResultMEM,fowardA,aluInA);
 mux3_1 inputB_alu(Reg2_EX,muxMemToReg,ResultMEM,fowardB,reg2_real);
 muxControl instancia1Mux (aluOp,branch,w_enable_mem,w_enable_reg,memToReg,aluSRC,MemRead,selecBurMux,AluOpID,BranchID,MemWriteID,RegWriteID,MemToRegID,AluSRC_ID,MemReadID);
@@ -65,8 +65,8 @@ mux3_1 reg_2(reg2,muxMemToReg,ResultMEM,mux_reg2,Reg2_ID);
 controlCPU monitoreo(opcode,aluOp,branch,w_enable_mem,w_enable_reg,memToReg,aluSRC,MemRead);//unidad de control de todo el sistema
 PC contadordeProg (pc,clk,rst,pcWrite,pc_actual);//bloque donde se actualiza el programCounter
 aluControl controlALU(fun3_EX,fun7_EX,aluOpEX,selOp);//unidad de contro de la ALU
-forwardingUnit controlMulti (addWrRegMEM,addRegWriteWB, readReg1, readReg2,regWriteMEM,RegWriteWB,fowardA,fowardB);//Unidad encargada de detectar data hazard solucionables
-HDU HDU_inst (MemReadEX,clk,rst,RegWriteEX,addWrRegEX,instrucID,selecBurMux,pcWrite,IF_ID_Write);
+forwardingUnit controlMulti (addWrRegMEM,addRegWriteWB,readReg1,readReg2,regWriteMEM,RegWriteWB,fowardA,fowardB);//Unidad encargada de detectar data hazard solucionables
+HDU HDU_inst (MemReadEX,RegWriteEX,addWrRegEX,instrucID,selecBurMux,pcWrite,IF_ID_Write);
 forwardingBranch instancia1 (addr_reg1,addr_reg2,addWrRegMEM,addRegWriteWB,branch,mux_reg1,mux_reg2);
 
 
@@ -89,7 +89,7 @@ nextInsBran nextInsSiBranch (PC_ID,immediate,PC_ifBranch); //Calculador de la si
 
 
 //Buffers para lograr el multiciclo
-buffer_IFID b_IFID(instrucIF,PC_IF,clk,0,IF_ID_Write,instrucID,PC_ID);
+buffer_IFID b_IFID(instrucIF,PC_IF,clk,IFflush_selInstrNext,IF_ID_Write,instrucID,PC_ID);
 buffer_IDEX b_IDEX(clk,AluSRC_ID,MemWriteID,MemReadID,MemToRegID,RegWriteID,addWrRegID,Reg1_ID,Reg2_ID,InmeID,AluOpID,fun3_ID,fun7_ID,addr_reg1,addr_reg2,addWrRegEX,AluSRC_EX,MemToRegEX,MemWriteEX,MemReadEX,RegWriteEX,Reg1_EX,Reg2_EX,Inme_EX,aluOpEX,fun3_EX,fun7_EX,readReg1,readReg2);
 buffer_EXMEM b_EXMEM(clk,ZeroEX,MemReadEX,MemWriteEX,RegWriteEX,MemToRegEX,addWrRegEX,ResultEX,reg2_real,addWrRegMEM,ResultMEM,ZeroMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM,dataWriteMem_MEM);
 buffer_MEMWB b_MEMWB(clk,memToRegMEM,regWriteMEM,addWrRegMEM,ResultMEM,dataMem_MEM,addRegWriteWB,ResultAluWB,DataMemWB,MemtoRegWB,RegWriteWB);

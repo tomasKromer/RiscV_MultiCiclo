@@ -1,4 +1,4 @@
-module HDU(input logic readMem_EX,clk,rst,writeReg,
+module HDU(input logic readMem_EX,writeReg,
            input logic [4:0] addWriteReg,
            input logic [31:0] instruc, 
            output logic selecBurMux,pcWrite,IF_ID_Write

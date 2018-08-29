@@ -9,15 +9,15 @@ module buffer_IFID(input logic [31:0] nextInstruc,
 
 always_ff @(posedge clk)
 begin
-    if(e_write)
-        begin    
-            actInstruc <= nextInstruc;
-            actPc <= nextPC;
+    if(IF_flush)
+        begin 
+            actInstruc <= 0;
+            actPc <= 0; 
         end
-    else if (IF_flush)
+    else if (e_write)
             begin
-                    actInstruc <= 0;
-                    actPc <= 0;
+                 actInstruc <= nextInstruc;
+                 actPc <= nextPC;
             end
     else
         begin    
@@ -26,5 +26,6 @@ begin
             end
    
 end                
+
                    
 endmodule
