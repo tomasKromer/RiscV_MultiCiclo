@@ -8,6 +8,8 @@ module PC #(parameter Nbits=64)
     if (rst)
         outPC <= 0;
     else if (pcWrite)
-        outPC <= inPC;        
+        outPC <= inPC;
+    else 
+        outPC <= outPC;            
          
 endmodule

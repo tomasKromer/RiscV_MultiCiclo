@@ -15,10 +15,15 @@ begin
             actPc <= nextPC;
         end
     else if (IF_flush)
-        begin
-            actInstruc <= 0;
-            actPc <= 0;
-    end
+            begin
+                    actInstruc <= 0;
+                    actPc <= 0;
+            end
+    else
+        begin    
+                actInstruc <= actInstruc;
+                actPc <= actPc;
+            end
    
 end                
                    
