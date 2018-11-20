@@ -44,7 +44,7 @@ logic [6:0] fun7_EX;
 //Señales de buffer de MEM
 logic [4:0] addWrRegMEM;
 logic [63:0] ResultMEM,PcB_MEM,dataMem_MEM,dataWriteMem_MEM;
-logic ZeroMEM,branchMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM;
+logic branchMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM;
 
 //Señales de buffer de WB
 logic [4:0] addRegWriteWB;
@@ -91,7 +91,7 @@ nextInsBran nextInsSiBranch (PC_ID,immediate,PC_ifBranch); //Calculador de la si
 //Buffers para lograr el multiciclo
 buffer_IFID b_IFID(instrucIF,PC_IF,clk,IFflush_selInstrNext,IF_ID_Write,instrucID,PC_ID);
 buffer_IDEX b_IDEX(clk,AluSRC_ID,MemWriteID,MemReadID,MemToRegID,RegWriteID,addWrRegID,Reg1_ID,Reg2_ID,InmeID,AluOpID,fun3_ID,fun7_ID,addr_reg1,addr_reg2,addWrRegEX,AluSRC_EX,MemToRegEX,MemWriteEX,MemReadEX,RegWriteEX,Reg1_EX,Reg2_EX,Inme_EX,aluOpEX,fun3_EX,fun7_EX,readReg1,readReg2);
-buffer_EXMEM b_EXMEM(clk,ZeroEX,MemReadEX,MemWriteEX,RegWriteEX,MemToRegEX,addWrRegEX,ResultEX,reg2_real,addWrRegMEM,ResultMEM,ZeroMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM,dataWriteMem_MEM);
+buffer_EXMEM b_EXMEM(clk,MemReadEX,MemWriteEX,RegWriteEX,MemToRegEX,addWrRegEX,ResultEX,reg2_real,addWrRegMEM,ResultMEM,memReadMEM,memWriteMEM,regWriteMEM,memToRegMEM,dataWriteMem_MEM);
 buffer_MEMWB b_MEMWB(clk,memToRegMEM,regWriteMEM,addWrRegMEM,ResultMEM,dataMem_MEM,addRegWriteWB,ResultAluWB,DataMemWB,MemtoRegWB,RegWriteWB);
 
          

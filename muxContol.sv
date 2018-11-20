@@ -1,7 +1,7 @@
 module muxControl(input logic [1:0] aluOp,
                  input logic branch,memWrite,regWrite,memToReg,aluSRC,memRead,selOp,
                  output logic [1:0] yAluOp,   
-                 output logic yBranch,yMemWrite,yRegWrite,yMemToReg,yAluSRC,yMemRead);
+                 output logic ybranch,yMemWrite,yRegWrite,yMemToReg,yAluSRC,yMemRead);
 
 always_comb
        begin
@@ -9,7 +9,7 @@ always_comb
             1'b0: 
                     begin
                          yAluOp = aluOp;
-                         yBranch = branch;
+                         ybranch = branch;
                          yMemWrite = memWrite;
                          yRegWrite = regWrite;
                          yMemToReg = memToReg;
@@ -19,7 +19,7 @@ always_comb
             1'b1:
                     begin
                         yAluOp = 0;
-                        yBranch = 0;
+                        ybranch = 0;
                         yMemWrite = 0;
                         yRegWrite = 0;
                         yMemToReg = 0;
